@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escáner de Código QR</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        #lector {
+            width: 300px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Escanea tu Código QR</h1>
+    
+    <!-- Lector de código QR -->
+    <div id="lector"></div>
+
+    <!-- Visualizador de Modelo 3D en AR -->
+    <model-viewer id="modeloHamburguesa" src="clasica.glb" ar ar-modes="webxr scene-viewer quick-look" 
+                  camera-controls auto-rotate style="width: 100%; height: 400px; display: none;">
+    </model-viewer>
+
+    <script>
+        // Inicializar el lector de QR
+        function enEscaneoExitoso(textoDecodificado, resultadoDecodificado) {
+            console.log(`Código escaneado: ${textoDecodificado}`, resultadoDecodificado);
+            
+            // Mostrar el modelo 3D de la hamburguesa en AR al escanear el código QR
+            const modeloHamburguesa = document.getElementById('modeloHamburguesa');
+            modeloHamburguesa.style.display = 'block';
+        }
+
+        function enEscaneoFallido(error) {
+            console.warn(`Error al escanear: ${error}`);
+        }
+
+        let html5QrCode = new Html5Qrcode("lector");
+        html5QrCode.start(
+            { facingMode: "environment" }, // Preferir la cámara trasera
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            },
+            enEscaneoExitoso,
+            enEscaneoFallido
+        ).catch(err => {
+            console.error(`No se pudo iniciar el escaneo, error: ${err}`);
+        });
+    </script>
+</body>
+</html>
